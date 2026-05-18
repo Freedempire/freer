@@ -249,12 +249,23 @@ h3 {
   max-width: 860px;
 }
 
+.entry-page h1 {
+  max-width: 760px;
+  margin-bottom: 14px;
+  font-size: clamp(34px, 5vw, 56px);
+  line-height: 1.08;
+}
+
+.entry-page .summary {
+  font-size: 17px;
+}
+
 .entry {
   margin-top: 28px;
 }
 
 .entry-header {
-  padding-bottom: 32px;
+  padding-bottom: 28px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -277,26 +288,31 @@ h3 {
 }
 
 .prose {
-  padding-top: 32px;
-  font-size: 17px;
+  padding-top: 28px;
+  font-size: 16px;
+  line-height: 1.72;
 }
 
 .prose h2 {
-  margin-top: 40px;
-  margin-bottom: 12px;
-  font-size: 24px;
+  margin-top: 34px;
+  margin-bottom: 10px;
+  font-size: 22px;
 }
 
 .prose h3 {
-  margin-top: 32px;
+  margin-top: 28px;
+  font-size: 18px;
 }
 
-.prose p,
+.prose p {
+  margin-bottom: 4px;
+}
+
 .prose ul,
 .prose ol,
 .prose blockquote,
 .prose pre {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .prose code,
