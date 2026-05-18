@@ -4,7 +4,7 @@ description: 西遊記
 date: 2026-05-18
 tags: []
 status: active
-license: all-rights-reserved
+license: public-domain
 book: xiyouji
 partOrder: 1
 chapterOrder: 3

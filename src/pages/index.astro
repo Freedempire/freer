@@ -7,68 +7,29 @@ import { byDateDesc } from "../lib/content";
 const articles = (await getCollection("articles")).sort(byDateDesc).slice(0, 4);
 const notes = (await getCollection("notes")).sort(byDateDesc).slice(0, 4);
 const projects = (await getCollection("projects")).sort(byDateDesc).slice(0, 3);
-
-const sections = [
-  {
-    href: "/articles/",
-    title: "articles",
-    text: "技术文章、长文、教程、系统化思考。",
-  },
-  {
-    href: "/projects/",
-    title: "projects",
-    text: "作品、实验、工具、长期维护的构件。",
-  },
-  {
-    href: "/photos/",
-    title: "photos",
-    text: "图片、截图、扫描、视觉笔记和生活切片。",
-  },
-  {
-    href: "/library/",
-    title: "library",
-    text: "公版书籍全文、整理版文本、阅读笔记。",
-  },
-];
 ---
 
 <BaseLayout>
   <main class="page">
     <section class="home-hero" aria-labelledby="home-title">
       <div>
-        <p class="kicker">index / anonymous static archive</p>
-        <h1 id="home-title">文章、项目、图片、笔记与公版文本的私人索引。</h1>
+        <p class="kicker">index / freer.top</p>
+        <h1 id="home-title">写作、影像、阅读与长期项目的索引。</h1>
         <p class="lede">
-          这里不做社交名片，也不暴露个人资料。它更像一个长期维护的资料节点：
-          内容优先，路径清晰，能被搜索、被引用、被反复打开。
+          这里存放一些持续整理的内容：文章、笔记、项目记录、图片片段，以及公开分享的文本。
+          不追逐动态流，只保留值得回看和生长的东西。
         </p>
       </div>
-      <pre class="terminal-readout" aria-label="站点索引状态"><strong>freer.top</strong>
-├─ /articles   technical writing
-├─ /projects   builds and experiments
-├─ /photos     image fragments
-├─ /notes      knowledge base
-└─ /library    public domain texts
+      <pre class="terminal-readout" aria-label="站点状态"><strong>freer.top</strong>
+status: quietly maintained
+focus: writing / reading / making
+format: notes, essays, archives
+pace: slow, searchable, durable
 
-mode: static
-stack: astro / markdown / cloudflare
-signal: low noise, durable links</pre>
-    </section>
-
-    <section class="section" aria-labelledby="sections-title">
-      <div class="section-head">
-        <h2 id="sections-title">目录</h2>
-      </div>
-      <div class="taxonomy">
-        {
-          sections.map((section) => (
-            <a href={section.href}>
-              <strong>{section.title}</strong>
-              <span>{section.text}</span>
-            </a>
-          ))
-        }
-      </div>
+latest:
+  articles  recent long-form pieces
+  notes     working thoughts
+  projects  things being shaped</pre>
     </section>
 
     <section class="section" aria-labelledby="recent-articles">
