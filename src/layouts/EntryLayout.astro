@@ -8,9 +8,21 @@ interface Props {
   date: Date;
   tags?: string[];
   collection: string;
+  license?: string;
+  copyright?: string;
+  source?: string;
 }
 
-const { title, description, date, tags = [], collection } = Astro.props;
+const {
+  title,
+  description,
+  date,
+  tags = [],
+  collection,
+  license = "all-rights-reserved",
+  copyright,
+  source,
+} = Astro.props;
 ---
 
 <BaseLayout title={title} description={description}>
@@ -26,6 +38,11 @@ const { title, description, date, tags = [], collection } = Astro.props;
       <div class="prose">
         <slot />
       </div>
+      <footer class="entry-rights" aria-label="版权与来源">
+        <span>license: {license}</span>
+        {copyright && <span>copyright: {copyright}</span>}
+        {source && <span>source: {source}</span>}
+      </footer>
     </article>
   </main>
 </BaseLayout>

@@ -4,7 +4,8 @@ type Entry =
   | CollectionEntry<"articles">
   | CollectionEntry<"notes">
   | CollectionEntry<"books">
-  | CollectionEntry<"projects">;
+  | CollectionEntry<"projects">
+  | CollectionEntry<"photos">;
 
 export function byDateDesc(a: Entry, b: Entry) {
   return b.data.date.getTime() - a.data.date.getTime();

@@ -325,6 +325,17 @@ h3 {
   color: var(--muted);
 }
 
+.entry-rights {
+  display: grid;
+  gap: 4px;
+  margin-top: 48px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  color: var(--faint);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+}
+
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -336,6 +347,8 @@ h3 {
   padding: 14px;
   display: flex;
   align-items: flex-end;
+  background-position: center;
+  background-size: cover;
   text-decoration: none;
 }
 

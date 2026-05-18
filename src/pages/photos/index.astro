@@ -1,6 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { photos } from "../../data/photos";
+import { getCollection } from "astro:content";
+import { byDateDesc, formatDate } from "../../lib/content";
+
+const photos = (await getCollection("photos")).sort(byDateDesc);
 ---
 
 <BaseLayout title="photos" description="图片、截图、扫描和视觉笔记。">
@@ -14,13 +17,21 @@ import { photos } from "../../data/photos";
       <div class="photo-grid">
         {
           photos.map((photo) => (
-            <a class="photo-tile" href="#" style={`background: ${photo.color}`}>
+            <a
+              class="photo-tile"
+              href="#"
+              style={
+                photo.data.image
+                  ? `background-color: ${photo.data.color}; background-image: linear-gradient(180deg, rgba(248, 248, 244, 0.08), rgba(17, 20, 19, 0.36)), url(${photo.data.image});`
+                  : `background: ${photo.data.color}`
+              }
+            >
               <span>
-                {photo.date}
+                {formatDate(photo.data.date)}
                 <br />
-                {photo.title}
+                {photo.data.title}
                 <br />
-                {photo.mood}
+                {photo.data.mood}
               </span>
             </a>
           ))
