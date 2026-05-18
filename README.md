@@ -1,6 +1,18 @@
-# Freer
+# freer.top
 
-Personal website for `freer.top`, built with Astro and deployed on Cloudflare Pages.
+Static archive for articles, projects, photos, notes, and public-domain texts.
+
+Built with Astro, Markdown content collections, and Cloudflare Pages.
+
+## Content
+
+```text
+src/content/articles  long-form writing
+src/content/projects  project logs
+src/content/notes     knowledge-base notes
+src/content/books     public-domain texts
+src/data/photos.ts    photo index metadata
+```
 
 ## Development
 
@@ -21,8 +33,3 @@ Cloudflare Pages settings:
 - Build command: `npm run build`
 - Build output directory: `dist`
 - Root directory: `/`
-
-After the first successful deployment, add these custom domains in Cloudflare Pages:
-
-- `freer.top`
-- `www.freer.top`

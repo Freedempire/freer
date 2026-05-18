@@ -1,0 +1,21 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EntryList from "../../components/EntryList.astro";
+import { byDateDesc } from "../../lib/content";
+
+const entries = (await getCollection("projects")).sort(byDateDesc);
+---
+
+<BaseLayout title="projects" description="作品、实验、工具和长期项目。">
+  <main class="page">
+    <header class="entry-header">
+      <p class="kicker">collection / projects</p>
+      <h1>projects</h1>
+      <p class="summary">面向过程的项目档案：想法、构建记录、发布状态、复盘和后续计划。</p>
+    </header>
+    <section class="section">
+      <EntryList entries={entries} basePath="/projects/" label="项目列表" />
+    </section>
+  </main>
+</BaseLayout>

@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { photos } from "../../data/photos";
+---
+
+<BaseLayout title="photos" description="图片、截图、扫描和视觉笔记。">
+  <main class="page">
+    <header class="entry-header">
+      <p class="kicker">collection / photos</p>
+      <h1>photos</h1>
+      <p class="summary">低频图片索引。它可以容纳生活记录、项目截图、图书扫描、视觉参考和过程材料。</p>
+    </header>
+    <section class="section">
+      <div class="photo-grid">
+        {
+          photos.map((photo) => (
+            <a class="photo-tile" href="#" style={`background: ${photo.color}`}>
+              <span>
+                {photo.date}
+                <br />
+                {photo.title}
+                <br />
+                {photo.mood}
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+</BaseLayout>

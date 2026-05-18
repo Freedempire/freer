@@ -1,0 +1,26 @@
+---
+import { entrySlug, formatDate, getExcerpt } from "../lib/content";
+
+interface Props {
+  entries: any[];
+  basePath: string;
+  label?: string;
+}
+
+const { entries, basePath, label = "entries" } = Astro.props;
+---
+
+<div class="index-list" aria-label={label}>
+  {
+    entries.map((entry) => (
+      <a class="index-row" href={`${basePath}${entrySlug(entry)}/`}>
+        <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+        <span>
+          <strong>{entry.data.title}</strong>
+          <small>{getExcerpt(entry)}</small>
+        </span>
+        <em>{entry.data.tags?.slice(0, 2).join(" / ")}</em>
+      </a>
+    ))
+  }
+</div>

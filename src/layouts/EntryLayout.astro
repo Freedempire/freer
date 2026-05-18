@@ -1,0 +1,31 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import { formatDate } from "../lib/content";
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  tags?: string[];
+  collection: string;
+}
+
+const { title, description, date, tags = [], collection } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <main class="page entry-page">
+    <a class="backlink" href={`/${collection}/`}>../{collection}</a>
+    <article class="entry">
+      <header class="entry-header">
+        <p class="kicker">{collection} / {formatDate(date)}</p>
+        <h1>{title}</h1>
+        <p class="summary">{description}</p>
+        {tags.length > 0 && <div class="tags">{tags.map((tag) => <span>{tag}</span>)}</div>}
+      </header>
+      <div class="prose">
+        <slot />
+      </div>
+    </article>
+  </main>
+</BaseLayout>

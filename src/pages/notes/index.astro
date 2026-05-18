@@ -1,0 +1,21 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EntryList from "../../components/EntryList.astro";
+import { byDateDesc } from "../../lib/content";
+
+const entries = (await getCollection("notes")).sort(byDateDesc);
+---
+
+<BaseLayout title="notes" description="个人知识库、阅读摘录、研究索引和短笔记。">
+  <main class="page">
+    <header class="entry-header">
+      <p class="kicker">collection / notes</p>
+      <h1>notes</h1>
+      <p class="summary">短笔记和知识节点，不追求完整文章，更偏向可链接、可检索、可继续生长。</p>
+    </header>
+    <section class="section">
+      <EntryList entries={entries} basePath="/notes/" label="笔记列表" />
+    </section>
+  </main>
+</BaseLayout>
