@@ -37,6 +37,21 @@ http://127.0.0.1:4321/keystatic/
 
 Keystatic is enabled only for local development. Production builds stay static and do not expose the studio route.
 
+The local studio uses Basic Auth:
+
+```text
+username: admin
+password: freer-local
+```
+
+Override these values with environment variables, or create a local `.env` from `.env.example`:
+
+```powershell
+$env:KEYSTATIC_AUTH_USERNAME = "admin"
+$env:KEYSTATIC_AUTH_PASSWORD = "your-local-password"
+npm run studio
+```
+
 The studio manages:
 
 ```text
@@ -48,6 +63,21 @@ photos    -> src/content/photos
 ```
 
 Each entry has status, tags, license, and copyright fields. Library entries also include type, author, language, and source fields.
+
+Keystatic writes Markdown files to the repo. You can edit through the studio or directly edit the source files in your editor.
+
+Published pages support:
+
+- Markdown
+- Mermaid code blocks with ```` ```mermaid ````
+- LaTeX math with `$inline$` and `$$block$$`
+
+To add a new collection:
+
+1. Add a schema to `src/content.config.ts`.
+2. Add the Keystatic collection to `keystatic.config.ts`.
+3. Add a list page and optional `[slug].astro` page under `src/pages`.
+4. Reuse `EntryList.astro`, `EntryLayout.astro`, and the existing `writingCollection(...)` helper where possible.
 
 ## Build
 

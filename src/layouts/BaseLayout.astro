@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import "katex/dist/katex.min.css";
 
 interface Props {
   title?: string;
@@ -45,5 +46,8 @@ const nav = [
       <span>static archive</span>
       <span>cc0 / public domain / original notes</span>
     </footer>
+    <script>
+      import "../scripts/mermaid";
+    </script>
   </body>
 </html>

@@ -318,6 +318,20 @@ h3 {
   border-left: 3px solid var(--accent);
 }
 
+.prose .mermaid {
+  margin: 24px 0;
+  padding: 18px;
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px 0;
+}
+
 .prose blockquote {
   margin-left: 0;
   padding-left: 18px;

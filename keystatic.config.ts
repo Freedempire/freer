@@ -7,12 +7,12 @@ const statusOptions = [
 ] as const;
 
 const licenseOptions = [
-  { label: "All rights reserved", value: "all-rights-reserved" },
-  { label: "CC BY 4.0", value: "cc-by-4.0" },
-  { label: "CC BY-NC-SA 4.0", value: "cc-by-nc-sa-4.0" },
-  { label: "CC0 1.0", value: "cc0-1.0" },
-  { label: "Public domain", value: "public-domain" },
-  { label: "Custom", value: "custom" },
+  { label: "All rights reserved - no reuse without permission", value: "all-rights-reserved" },
+  { label: "CC BY 4.0 - attribution required", value: "cc-by-4.0" },
+  { label: "CC BY-NC-SA 4.0 - non-commercial share-alike", value: "cc-by-nc-sa-4.0" },
+  { label: "CC0 1.0 - waived rights where possible", value: "cc0-1.0" },
+  { label: "Public domain - no known copyright restriction", value: "public-domain" },
+  { label: "Custom - explain in source/copyright fields", value: "custom" },
 ] as const;
 
 const tagList = fields.array(fields.text({ label: "Tag" }), {
@@ -64,6 +64,8 @@ const commonEntryFields = {
   }),
   license: fields.select({
     label: "License",
+    description:
+      "All rights reserved: no reuse without permission. CC BY: reuse with attribution. CC BY-NC-SA: non-commercial reuse with attribution and same license. CC0: waived rights where possible. Public domain: no known copyright restriction. Custom: explain in Source/Copyright.",
     options: licenseOptions,
     defaultValue: "all-rights-reserved",
   }),
