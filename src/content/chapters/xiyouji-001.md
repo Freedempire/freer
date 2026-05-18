@@ -9,10 +9,7 @@ license: public-domain
 book: xiyouji
 partOrder: 1
 chapterOrder: 1
-chapterLabel: 第一回　靈根育孕源流出　心性修持大道生
 ---
-# 第一回　靈根育孕源流出　心性修持大道生
-
 詩曰：
 
 混沌未分天地亂，茫茫渺渺無人見。
