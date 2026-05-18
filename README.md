@@ -90,7 +90,7 @@ The public pages then render:
 
 Keystatic writes Markdown files to the repo. You can edit through the studio or directly edit the source files in your editor.
 
-`npm run studio` runs with content-file hot reload disabled so Create and Save in Keystatic do not force the editor page to reload. Use `npm run dev` when you want normal site preview hot reload while editing files directly.
+`npm run studio` runs with dev-server hot reload disabled so Create and Save in Keystatic do not force the editor page to reload. Use `npm run dev` when you want normal site preview hot reload while editing files directly.
 
 The editor stores MDX-compatible Markdown in `.md` files. Published pages support:
 

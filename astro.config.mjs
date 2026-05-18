@@ -16,6 +16,7 @@ export default defineConfig({
   },
   vite: {
     server: {
+      hmr: isStudioServer ? false : undefined,
       watch: {
         ignored: isStudioServer ? ["**/src/content/**"] : [],
       },
