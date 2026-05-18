@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "studio": "astro dev --host 127.0.0.1 --port 4321",
+    "studio": "set FREER_STUDIO=1&& astro dev --host 127.0.0.1 --port 4321",
     "build": "astro check && astro build",
     "preview": "astro preview",
     "publish": "powershell -ExecutionPolicy Bypass -File scripts/publish.ps1"

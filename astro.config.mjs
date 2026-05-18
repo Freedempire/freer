@@ -5,6 +5,7 @@ import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 
 const isDevServer = process.argv.includes("dev");
+const isStudioServer = process.env.FREER_STUDIO === "1";
 
 export default defineConfig({
   site: "https://freer.top",
@@ -12,5 +13,12 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeKatex],
+  },
+  vite: {
+    server: {
+      watch: {
+        ignored: isStudioServer ? ["**/src/content/**"] : [],
+      },
+    },
   },
 });

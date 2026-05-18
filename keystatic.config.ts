@@ -20,7 +20,7 @@ const tagList = fields.array(fields.text({ label: "Tag" }), {
   itemLabel: (props) => props.value,
 });
 
-const contentBody = fields.markdoc({
+const contentBody = fields.mdx({
   label: "Content",
   extension: "md",
   options: {
