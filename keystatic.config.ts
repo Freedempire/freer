@@ -64,8 +64,6 @@ const commonEntryFields = {
   }),
   license: fields.select({
     label: "License",
-    description:
-      "All rights reserved: no reuse without permission. CC BY: reuse with attribution. CC BY-NC-SA: non-commercial reuse with attribution and same license. CC0: waived rights where possible. Public domain: no known copyright restriction. Custom: explain in Source/Copyright.",
     options: licenseOptions,
     defaultValue: "all-rights-reserved",
   }),

@@ -1,7 +1,10 @@
 import { defineMiddleware } from "astro:middleware";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 
 const protectedPrefixes = ["/keystatic", "/api/keystatic"];
 const sessionCookie = "freer_studio_session";
+const execFileAsync = promisify(execFile);
 
 function timingSafeEqual(a: string, b: string) {
   const encoder = new TextEncoder();
@@ -100,6 +103,22 @@ function loginPage(error = false) {
   );
 }
 
+async function runPowerShell(args: string[]) {
+  return execFileAsync("powershell", args, {
+    cwd: process.cwd(),
+    windowsHide: true,
+    maxBuffer: 1024 * 1024 * 20,
+  });
+}
+
+async function hasLocalChanges() {
+  const { stdout } = await execFileAsync("git", ["status", "--porcelain"], {
+    cwd: process.cwd(),
+    windowsHide: true,
+  });
+  return stdout.trim().length > 0;
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
   if (!import.meta.env.DEV) {
     return next();
@@ -136,6 +155,45 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
+  if (context.url.pathname === "/studio-status") {
+    return Response.json({ dirty: await hasLocalChanges() });
+  }
+
+  if (context.url.pathname === "/studio-publish") {
+    if (context.request.method !== "POST") {
+      return Response.json(
+        { success: false, message: "Method not allowed" },
+        { status: 405 },
+      );
+    }
+
+    if (context.cookies.get(sessionCookie)?.value !== (await sessionToken())) {
+      return Response.json(
+        { success: false, message: "Not authenticated" },
+        { status: 401 },
+      );
+    }
+
+    try {
+      const { stdout, stderr } = await runPowerShell([
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/publish.ps1",
+        "-Message",
+        "Update site content",
+      ]);
+      return Response.json({
+        success: true,
+        message: "Published",
+        output: `${stdout}\n${stderr}`.trim(),
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Publish failed";
+      return Response.json({ success: false, message }, { status: 500 });
+    }
+  }
+
   if (context.url.pathname === "/studio-logout") {
     return new Response(null, {
       status: 303,
@@ -161,5 +219,27 @@ export const onRequest = defineMiddleware(async (context, next) => {
     });
   }
 
-  return next();
+  const response = await next();
+  const contentType = response.headers.get("content-type") ?? "";
+
+  if (
+    context.url.pathname.startsWith("/keystatic") &&
+    contentType.includes("text/html")
+  ) {
+    const html = await response.text();
+    const script = '<script type="module" src="/src/scripts/studio-publish-button.ts"></script>';
+    const enhancedHtml = html.includes("</body>")
+      ? html.replace("</body>", `${script}</body>`)
+      : `${html}${script}`;
+    const headers = new Headers(response.headers);
+    headers.delete("content-length");
+
+    return new Response(enhancedHtml, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  }
+
+  return response;
 });
