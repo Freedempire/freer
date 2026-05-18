@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import EntryLayout from "../../../layouts/EntryLayout.astro";
+import { mergeTags } from "../../../lib/content";
 import {
   chaptersForBook,
   slugFromEntry,
@@ -31,13 +32,14 @@ const chapterIndex = bookChapters.findIndex(
 const previous = bookChapters[chapterIndex - 1];
 const next = bookChapters[chapterIndex + 1];
 const bookSlug = slugFromEntry(book);
+const tags = mergeTags(book.data.tags, chapter.data.tags);
 ---
 
 <EntryLayout
   title={chapter.data.title}
   description={chapter.data.description}
   date={chapter.data.date}
-  tags={chapter.data.tags}
+  tags={tags}
   license={chapter.data.license}
   copyright={chapter.data.copyright}
   collection="library"

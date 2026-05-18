@@ -66,6 +66,8 @@ photos    -> src/content/photos
 
 Each entry has status, tags, license, and copyright fields. Library entries also include type, author, language, and source fields.
 
+In the local studio, Tag fields suggest existing tags from `src/content` as you type. Chapter pages inherit tags from their parent Library entry at render time, so you do not need to repeat book-level tags on every chapter.
+
 For a long public-domain book or serial, create one parent entry in `Library`, then create each chapter in `Book Chapters`.
 
 Use the chapter fields this way:

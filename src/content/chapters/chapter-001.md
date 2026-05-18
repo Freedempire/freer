@@ -2,8 +2,7 @@
 title: 第一回　靈根育孕源流出　心性修持大道生
 description: 西遊記
 date: 2026-05-18
-tags:
-  - journey-to-the-west
+tags: []
 status: active
 license: public-domain
 book: xiyouji

@@ -1,6 +1,9 @@
 import { defineMiddleware } from "astro:middleware";
 import { execFile } from "node:child_process";
+import { readdir, readFile } from "node:fs/promises";
+import { extname, join } from "node:path";
 import { promisify } from "node:util";
+import { parse } from "yaml";
 
 const protectedPrefixes = ["/keystatic", "/api/keystatic"];
 const sessionCookie = "freer_studio_session";
@@ -119,6 +122,58 @@ async function hasLocalChanges() {
   return stdout.trim().length > 0;
 }
 
+async function collectContentFiles(directory: string): Promise<string[]> {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = await Promise.all(
+    entries.map(async (entry) => {
+      const fullPath = join(directory, entry.name);
+
+      if (entry.isDirectory()) {
+        return collectContentFiles(fullPath);
+      }
+
+      return [fullPath];
+    }),
+  );
+
+  return files
+    .flat()
+    .filter((filePath) => [".md", ".mdx"].includes(extname(filePath)));
+}
+
+function extractFrontmatter(content: string) {
+  const match = /^---\r?\n([\s\S]*?)\r?\n---/.exec(content);
+  return match?.[1];
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
+}
+
+async function collectTags() {
+  const contentDirectory = join(process.cwd(), "src", "content");
+  const files = await collectContentFiles(contentDirectory);
+  const tags = new Set<string>();
+
+  await Promise.all(
+    files.map(async (filePath) => {
+      try {
+        const frontmatter = extractFrontmatter(await readFile(filePath, "utf8"));
+        if (!frontmatter) return;
+
+        const data = parse(frontmatter) as { tags?: unknown } | null;
+        if (!data || !isStringArray(data.tags)) return;
+
+        data.tags.forEach((tag) => tags.add(tag));
+      } catch {
+        // Ignore malformed drafts so one broken file does not disable suggestions.
+      }
+    }),
+  );
+
+  return Array.from(tags).sort((a, b) => a.localeCompare(b));
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
   if (!import.meta.env.DEV) {
     return next();
@@ -157,6 +212,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   if (context.url.pathname === "/studio-status") {
     return Response.json({ dirty: await hasLocalChanges() });
+  }
+
+  if (context.url.pathname === "/studio-tags") {
+    if (context.cookies.get(sessionCookie)?.value !== (await sessionToken())) {
+      return Response.json({ tags: [] }, { status: 401 });
+    }
+
+    return Response.json({ tags: await collectTags() });
   }
 
   if (context.url.pathname === "/studio-publish") {

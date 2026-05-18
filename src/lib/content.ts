@@ -4,6 +4,7 @@ type Entry =
   | CollectionEntry<"articles">
   | CollectionEntry<"notes">
   | CollectionEntry<"books">
+  | CollectionEntry<"chapters">
   | CollectionEntry<"projects">
   | CollectionEntry<"photos">;
 
@@ -25,4 +26,8 @@ export function getExcerpt(entry: Entry) {
 
 export function entrySlug(entry: Entry) {
   return entry.id.replace(/\.mdx?$/, "");
+}
+
+export function mergeTags(...tagSets: Array<readonly string[] | undefined>) {
+  return Array.from(new Set(tagSets.flatMap((tags) => tags ?? [])));
 }
