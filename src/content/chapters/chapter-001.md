@@ -1,6 +1,6 @@
 ---
 title: 第一回　靈根育孕源流出　心性修持大道生
-description: 西遊記第一回
+description: 西遊記
 date: 2026-05-18
 tags:
   - journey-to-the-west
@@ -9,6 +9,7 @@ license: public-domain
 book: xiyouji
 partOrder: 1
 chapterOrder: 1
+chapterLabel: 第一回
 ---
 詩曰：
 
