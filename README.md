@@ -37,7 +37,7 @@ http://127.0.0.1:4321/keystatic/
 
 Keystatic is enabled only for local development. Production builds stay static and do not expose the studio route.
 
-The local studio uses Basic Auth:
+The local studio uses a small local login page:
 
 ```text
 username: admin
