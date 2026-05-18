@@ -1,0 +1,65 @@
+---
+import { getCollection, render } from "astro:content";
+import EntryLayout from "../../../layouts/EntryLayout.astro";
+import {
+  chaptersForBook,
+  slugFromEntry,
+  type ChapterEntry,
+} from "../../../lib/library";
+
+export async function getStaticPaths() {
+  const books = await getCollection("books");
+  const chapters = await getCollection("chapters");
+
+  return books.flatMap((book) =>
+    chaptersForBook(book, chapters).map((chapter) => ({
+      params: {
+        book: slugFromEntry(book),
+        chapter: slugFromEntry(chapter),
+      },
+      props: { book, chapter },
+    })),
+  );
+}
+
+const { book, chapter } = Astro.props;
+const { Content } = await render(chapter as ChapterEntry);
+const bookChapters = chaptersForBook(book, await getCollection("chapters"));
+const chapterIndex = bookChapters.findIndex(
+  (item) => slugFromEntry(item) === slugFromEntry(chapter),
+);
+const previous = bookChapters[chapterIndex - 1];
+const next = bookChapters[chapterIndex + 1];
+const bookSlug = slugFromEntry(book);
+---
+
+<EntryLayout
+  title={chapter.data.title}
+  description={chapter.data.description}
+  date={chapter.data.date}
+  tags={chapter.data.tags}
+  license={chapter.data.license}
+  copyright={chapter.data.copyright}
+  collection="library"
+>
+  <p class="chapter-context">
+    <a href={`/library/${bookSlug}/`}>{book.data.title}</a>
+    {chapter.data.part && <> / {chapter.data.part}</>}
+    {" / "}
+    {chapter.data.chapterLabel || `Chapter ${chapter.data.chapterOrder}`}
+  </p>
+  <Content />
+  <nav class="chapter-nav" aria-label="章节导航">
+    {previous ? (
+      <a href={`/library/${bookSlug}/${slugFromEntry(previous)}/`}>← {previous.data.title}</a>
+    ) : (
+      <span></span>
+    )}
+    <a href={`/library/${bookSlug}/`}>目录</a>
+    {next ? (
+      <a href={`/library/${bookSlug}/${slugFromEntry(next)}/`}>{next.data.title} →</a>
+    ) : (
+      <span></span>
+    )}
+  </nav>
+</EntryLayout>

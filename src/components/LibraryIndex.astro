@@ -1,0 +1,76 @@
+---
+import { formatDate } from "../lib/content";
+import {
+  chaptersForBook,
+  groupChaptersByPart,
+  slugFromEntry,
+  type BookEntry,
+  type ChapterEntry,
+} from "../lib/library";
+
+interface Props {
+  books: BookEntry[];
+  chapters: ChapterEntry[];
+}
+
+const { books, chapters } = Astro.props;
+---
+
+<div class="library-stack">
+  {
+    books.map((book) => {
+      const bookChapters = chaptersForBook(book, chapters);
+      const parts = groupChaptersByPart(bookChapters);
+      const bookSlug = slugFromEntry(book);
+
+      return (
+        <article class="library-book">
+          <header>
+            <p class="kicker">
+              {book.data.type} / {formatDate(book.data.date)}
+            </p>
+            <h2>
+              <a href={`/library/${bookSlug}/`}>{book.data.title}</a>
+            </h2>
+            <p>{book.data.description}</p>
+            <dl>
+              {book.data.author && (
+                <>
+                  <dt>author</dt>
+                  <dd>{book.data.author}</dd>
+                </>
+              )}
+              <dt>license</dt>
+              <dd>{book.data.license}</dd>
+              <dt>chapters</dt>
+              <dd>{bookChapters.length}</dd>
+            </dl>
+          </header>
+
+          {parts.length > 0 && (
+            <div class="library-toc">
+              {parts.map((part) => (
+                <section>
+                  <h3>{part.title}</h3>
+                  <ol>
+                    {part.chapters.map((chapter) => (
+                      <li>
+                        <a href={`/library/${bookSlug}/${slugFromEntry(chapter)}/`}>
+                          <span>
+                            {chapter.data.chapterLabel ||
+                              `Chapter ${chapter.data.chapterOrder}`}
+                          </span>
+                          <strong>{chapter.data.title}</strong>
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              ))}
+            </div>
+          )}
+        </article>
+      );
+    })
+  }
+</div>

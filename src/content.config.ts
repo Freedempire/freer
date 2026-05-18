@@ -28,6 +28,14 @@ const bookSchema = entrySchema.extend({
   source: optionalString,
 });
 
+const chapterSchema = entrySchema.extend({
+  book: z.string(),
+  part: optionalString,
+  partOrder: z.number().default(1),
+  chapterOrder: z.number().default(1),
+  chapterLabel: optionalString,
+});
+
 const projectSchema = entrySchema.extend({
   stage: z.enum(["idea", "building", "stable", "paused"]).default("building"),
 });
@@ -42,6 +50,7 @@ export const collections = {
   articles: defineCollection({ type: "content", schema: entrySchema }),
   notes: defineCollection({ type: "content", schema: entrySchema }),
   books: defineCollection({ type: "content", schema: bookSchema }),
+  chapters: defineCollection({ type: "content", schema: chapterSchema }),
   projects: defineCollection({ type: "content", schema: projectSchema }),
   photos: defineCollection({ type: "content", schema: photoSchema }),
 };

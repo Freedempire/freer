@@ -42,6 +42,32 @@ function createPublishButton() {
   return button;
 }
 
+function isDashboardRoute() {
+  const normalizedPath = window.location.pathname.replace(/\/+$/, "");
+  return normalizedPath === "/keystatic";
+}
+
+function watchRouteChanges(callback: () => void) {
+  const notify = () => window.setTimeout(callback, 0);
+  const originalPushState = window.history.pushState;
+  const originalReplaceState = window.history.replaceState;
+
+  window.history.pushState = function pushState(...args) {
+    const result = originalPushState.apply(this, args);
+    notify();
+    return result;
+  };
+
+  window.history.replaceState = function replaceState(...args) {
+    const result = originalReplaceState.apply(this, args);
+    notify();
+    return result;
+  };
+
+  window.addEventListener("popstate", notify);
+  window.addEventListener("hashchange", notify);
+}
+
 async function getStatus() {
   const response = await fetch("/studio-status", {
     cache: "no-store",
@@ -75,8 +101,26 @@ async function publish() {
 
 async function init() {
   const button = createPublishButton();
+  let refreshTimer: number | undefined;
+
+  function syncVisibility() {
+    const shouldShow = isDashboardRoute();
+    button.hidden = !shouldShow;
+
+    if (shouldShow && refreshTimer === undefined) {
+      void refresh();
+      refreshTimer = window.setInterval(refresh, 15000);
+    }
+
+    if (!shouldShow && refreshTimer !== undefined) {
+      window.clearInterval(refreshTimer);
+      refreshTimer = undefined;
+    }
+  }
 
   async function refresh() {
+    if (button.hidden) return;
+
     try {
       const status = await getStatus();
       button.disabled = !status.dirty;
@@ -116,8 +160,8 @@ async function init() {
     }
   });
 
-  await refresh();
-  window.setInterval(refresh, 15000);
+  syncVisibility();
+  watchRouteChanges(syncVisibility);
 }
 
 init();

@@ -10,8 +10,9 @@ Built with Astro, Markdown content collections, and Cloudflare Pages.
 src/content/articles  long-form writing
 src/content/projects  project logs
 src/content/notes     knowledge-base notes
-src/content/books     public-domain texts
-src/data/photos.ts    photo index metadata
+src/content/books     books, serials, and library parent entries
+src/content/chapters  chapters linked to library entries
+src/content/photos    photo entries and metadata
 ```
 
 ## Development
@@ -59,10 +60,31 @@ articles  -> src/content/articles
 notes     -> src/content/notes
 projects  -> src/content/projects
 library   -> src/content/books
+chapters  -> src/content/chapters
 photos    -> src/content/photos
 ```
 
 Each entry has status, tags, license, and copyright fields. Library entries also include type, author, language, and source fields.
+
+For a long public-domain book or serial, create one parent entry in `Library`, then create each chapter in `Book Chapters`.
+
+Use the chapter fields this way:
+
+```text
+Book           parent Library entry
+Part           optional grouping, e.g. Part 1 or Volume I
+Part order     numeric order for parts
+Chapter order  numeric order within the full book
+Chapter label  optional display label, e.g. Chapter 1 or 第三章
+```
+
+The public pages then render:
+
+```text
+/library/                    all library entries with grouped tables of contents
+/library/book-slug/          book intro plus full table of contents
+/library/book-slug/chapter/  chapter page with previous/next navigation
+```
 
 Keystatic writes Markdown files to the repo. You can edit through the studio or directly edit the source files in your editor.
 

@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import EntryLayout from "../../layouts/EntryLayout.astro";
+import { chaptersForBook, groupChaptersByPart, slugFromEntry } from "../../lib/library";
 
 export async function getStaticPaths() {
   const entries = await getCollection("books");
@@ -12,6 +13,9 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+const chapters = chaptersForBook(entry, await getCollection("chapters"));
+const parts = groupChaptersByPart(chapters);
+const bookSlug = slugFromEntry(entry);
 ---
 
 <EntryLayout
@@ -25,4 +29,29 @@ const { Content } = await render(entry);
   collection="library"
 >
   <Content />
+  {
+    parts.length > 0 && (
+      <nav class="book-toc" aria-label="书籍目录">
+        <h2>目录</h2>
+        {parts.map((part) => (
+          <section>
+            <h3>{part.title}</h3>
+            <ol>
+              {part.chapters.map((chapter) => (
+                <li>
+                  <a href={`/library/${bookSlug}/${slugFromEntry(chapter)}/`}>
+                    <span>
+                      {chapter.data.chapterLabel ||
+                        `Chapter ${chapter.data.chapterOrder}`}
+                    </span>
+                    <strong>{chapter.data.title}</strong>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))}
+      </nav>
+    )
+  }
 </EntryLayout>

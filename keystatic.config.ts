@@ -152,6 +152,43 @@ export default config({
         content: contentBody,
       },
     }),
+    chapters: collection({
+      label: "Book Chapters",
+      path: "src/content/chapters/*",
+      slugField: "title",
+      format: { contentField: "content" },
+      columns: ["book", "partOrder", "chapterOrder", "status"],
+      schema: {
+        ...commonEntryFields,
+        book: fields.relationship({
+          label: "Book",
+          collection: "library",
+          validation: { isRequired: true },
+          description: "Select the parent book or serial in Library.",
+        }),
+        part: fields.text({
+          label: "Part",
+          description: "Optional. Example: Part 1, Volume I, Book One.",
+        }),
+        partOrder: fields.number({
+          label: "Part order",
+          defaultValue: 1,
+          step: 1,
+          validation: { isRequired: true, min: 1 },
+        }),
+        chapterOrder: fields.number({
+          label: "Chapter order",
+          defaultValue: 1,
+          step: 1,
+          validation: { isRequired: true, min: 1 },
+        }),
+        chapterLabel: fields.text({
+          label: "Chapter label",
+          description: "Optional display label, e.g. Chapter 1 or 第三章.",
+        }),
+        content: contentBody,
+      },
+    }),
     photos: collection({
       label: "Photos",
       path: "src/content/photos/*",

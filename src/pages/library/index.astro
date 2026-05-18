@@ -1,10 +1,11 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import EntryList from "../../components/EntryList.astro";
+import LibraryIndex from "../../components/LibraryIndex.astro";
 import { byDateDesc } from "../../lib/content";
 
-const entries = (await getCollection("books")).sort(byDateDesc);
+const books = (await getCollection("books")).sort(byDateDesc);
+const chapters = await getCollection("chapters");
 ---
 
 <BaseLayout title="library" description="公版书籍全文、整理版文本和阅读笔记。">
@@ -15,7 +16,7 @@ const entries = (await getCollection("books")).sort(byDateDesc);
       <p class="summary">只收录可合法公开分享的文本：公版书籍、开放许可资料、整理版全文和相关笔记。</p>
     </header>
     <section class="section">
-      <EntryList entries={entries} basePath="/library/" label="书库列表" />
+      <LibraryIndex books={books} chapters={chapters} />
     </section>
   </main>
 </BaseLayout>
