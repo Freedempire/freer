@@ -1,0 +1,180 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { entrySlug, formatDate, mergeTags } from "../lib/content";
+import { slugFromEntry } from "../lib/library";
+
+type SearchItem = {
+  title: string;
+  description: string;
+  date: string;
+  displayDate: string;
+  collection: string;
+  tags: string[];
+  href: string;
+  text: string;
+};
+
+const articles = await getCollection("articles");
+const notes = await getCollection("notes");
+const projects = await getCollection("projects");
+const photos = await getCollection("photos");
+const books = await getCollection("books");
+const chapters = await getCollection("chapters");
+const booksBySlug = new Map(books.map((book) => [slugFromEntry(book), book]));
+
+function item(
+  entry: any,
+  collection: string,
+  href: string,
+  tags = entry.data.tags ?? [],
+): SearchItem {
+  return {
+    title: entry.data.title,
+    description: entry.data.description,
+    date: entry.data.date.toISOString(),
+    displayDate: formatDate(entry.data.date),
+    collection,
+    tags,
+    href,
+    text: [
+      entry.data.title,
+      entry.data.description,
+      collection,
+      ...(tags ?? []),
+      entry.body ?? "",
+    ]
+      .join(" ")
+      .toLowerCase(),
+  };
+}
+
+const searchIndex = [
+  ...articles.map((entry) => item(entry, "articles", `/articles/${entrySlug(entry)}/`)),
+  ...notes.map((entry) => item(entry, "notes", `/notes/${entrySlug(entry)}/`)),
+  ...projects.map((entry) => item(entry, "projects", `/projects/${entrySlug(entry)}/`)),
+  ...photos.map((entry) => item(entry, "photos", `/photos/#${entrySlug(entry)}`)),
+  ...books.map((entry) => item(entry, "library", `/library/${entrySlug(entry)}/`)),
+  ...chapters.map((entry) => {
+    const book = booksBySlug.get(entry.data.book);
+    const tags = mergeTags(book?.data.tags, entry.data.tags);
+    const href = book
+      ? `/library/${slugFromEntry(book)}/${entrySlug(entry)}/`
+      : `/library/`;
+    return item(entry, "chapters", href, tags);
+  }),
+].sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+
+const allTags = Array.from(new Set(searchIndex.flatMap((entry) => entry.tags))).sort((a, b) =>
+  a.localeCompare(b),
+);
+---
+
+<BaseLayout title="search" description="搜索文章、笔记、项目、图片和书库内容。">
+  <main class="page">
+    <header class="entry-header">
+      <p class="kicker">index / search</p>
+      <h1>search</h1>
+      <p class="summary">搜索标题、摘要、正文和标签；也可以按栏目或 tag 缩小范围。</p>
+    </header>
+
+    <section class="section search-panel" aria-label="站内搜索">
+      <div class="search-controls">
+        <label>
+          <span>query</span>
+          <input id="search-query" type="search" placeholder="输入关键词..." autocomplete="off" />
+        </label>
+        <label>
+          <span>collection</span>
+          <select id="search-collection">
+            <option value="">all</option>
+            <option value="articles">articles</option>
+            <option value="notes">notes</option>
+            <option value="projects">projects</option>
+            <option value="photos">photos</option>
+            <option value="library">library</option>
+            <option value="chapters">chapters</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="tag-filter" aria-label="tag 过滤">
+        {allTags.map((tag) => <button type="button" data-tag={tag}>{tag}</button>)}
+      </div>
+
+      <p class="search-count" id="search-count"></p>
+      <div class="search-results" id="search-results"></div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script is:inline define:vars={{ searchIndex }}>
+  const queryInput = document.querySelector("#search-query");
+  const collectionSelect = document.querySelector("#search-collection");
+  const tagButtons = Array.from(document.querySelectorAll("[data-tag]"));
+  const count = document.querySelector("#search-count");
+  const results = document.querySelector("#search-results");
+  const activeTags = new Set();
+
+  function escapeHtml(value) {
+    return value.replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;",
+    })[char]);
+  }
+
+  function matchesQuery(entry, query) {
+    if (!query) return true;
+    return query
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean)
+      .every((term) => entry.text.includes(term));
+  }
+
+  function render() {
+    const query = queryInput.value.trim();
+    const collection = collectionSelect.value;
+    const entries = searchIndex.filter((entry) => {
+      if (collection && entry.collection !== collection) return false;
+      if (!matchesQuery(entry, query)) return false;
+      return Array.from(activeTags).every((tag) => entry.tags.includes(tag));
+    });
+
+    count.textContent = `${entries.length} result${entries.length === 1 ? "" : "s"}`;
+    results.innerHTML = entries
+      .map((entry) => `
+        <a class="search-result" href="${entry.href}">
+          <time datetime="${entry.date}">${entry.displayDate}</time>
+          <span>
+            <strong>${escapeHtml(entry.title)}</strong>
+            <small>${escapeHtml(entry.description)}</small>
+            ${entry.tags.length ? `<em>${entry.tags.map((tag) => `#${escapeHtml(tag)}`).join(" ")}</em>` : ""}
+          </span>
+          <b>${entry.collection}</b>
+        </a>
+      `)
+      .join("");
+  }
+
+  queryInput.addEventListener("input", render);
+  collectionSelect.addEventListener("change", render);
+  tagButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const tag = button.dataset.tag;
+      if (activeTags.has(tag)) {
+        activeTags.delete(tag);
+        button.dataset.active = "false";
+      } else {
+        activeTags.add(tag);
+        button.dataset.active = "true";
+      }
+      render();
+    });
+  });
+
+  render();
+</script>

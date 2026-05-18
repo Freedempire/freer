@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import { byDateDesc, formatDate } from "../../lib/content";
+import { byDateDesc, entrySlug, formatDate } from "../../lib/content";
 
 const photos = (await getCollection("photos")).sort(byDateDesc);
 ---
@@ -18,8 +18,9 @@ const photos = (await getCollection("photos")).sort(byDateDesc);
         {
           photos.map((photo) => (
             <a
+              id={entrySlug(photo)}
               class="photo-tile"
-              href="#"
+              href={`/photos/#${entrySlug(photo)}`}
               style={
                 photo.data.image
                   ? `background-color: ${photo.data.color}; background-image: linear-gradient(180deg, rgba(248, 248, 244, 0.08), rgba(17, 20, 19, 0.36)), url(${photo.data.image});`
