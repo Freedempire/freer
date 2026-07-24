@@ -15,6 +15,7 @@ book: the-new-trading-for-a-living-reading-notes
 part: 第一章
 partOrder: 1
 chapterOrder: 1
+chapterLabel: Note 1
 ---
 ## 原文引用
 
