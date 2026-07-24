@@ -12,6 +12,7 @@ tags:
   - trading
 status: active
 license: all-rights-reserved
+copyright: © freer.top
 type: essay
 author: ' '
 language: zh
